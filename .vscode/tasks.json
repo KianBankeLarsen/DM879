@@ -12,7 +12,7 @@
             "type": "shell",
             "group": "build",
             "dependsOn": ["build"],
-            "command": "docker run -it poker"
+            "command": "docker run poker"
         },
     ]
   }
