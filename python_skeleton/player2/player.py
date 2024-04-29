@@ -95,7 +95,7 @@ class Player(Bot):
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
                 
         if round_state.hands[active][0][0] == round_state.hands[active][1][0]:
-            print("Found pair")
+            print(f"Found pair {round_state.hands[active]}")
             return RaiseAction(round_state.stacks[active])
             
         
