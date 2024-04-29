@@ -6,6 +6,8 @@ from skeleton.states import GameState, TerminalState, RoundState
 from skeleton.states import NUM_ROUNDS, STARTING_STACK, BIG_BLIND, SMALL_BLIND
 from skeleton.bot import Bot
 from skeleton.runner import parse_args, run_bot
+from montecarlo_sim_handstrength import simulate_win_rate
+import eval7
 
 
 class Player(Bot):
@@ -93,7 +95,9 @@ class Player(Bot):
         #    min_raise, max_raise = round_state.raise_bounds()  # the smallest and largest numbers of chips for a legal bet/raise
         #    min_cost = min_raise - my_pip  # the cost of a minimum bet/raise
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
-                
+
+        win_rate = simulate_win_rate(game_state, round_state, active, simulations=1000)
+        
         if round_state.hands[active][0][0] == round_state.hands[active][1][0]:
             print(f"Found pair {round_state.hands[active]}")
             return RaiseAction(round_state.stacks[active])
