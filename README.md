@@ -30,4 +30,4 @@ The task `run` builds and executes the project as it depends on `build`. The tas
 }
 ```
 
-Python packages must be specified in `/requirements.txt`.
+Python packages must be specified in `requirements.txt`.
