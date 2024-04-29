@@ -5,14 +5,14 @@
             "label": "build",
             "type": "shell",
             "group": "build",
-            "command": "docker build . -t 'poker'"
+            "command": "docker build . -t poker"
         },
         {
             "label": "run",
             "type": "shell",
             "group": "build",
             "dependsOn": ["build"],
-            "command": "docker run poker"
+            "command": "docker run -v ./logs/gamelog.log:/poker/gamelog.txt -v ./logs/A.log:/poker/A.txt -v ./logs/B.log:/poker/B.txt poker
         },
     ]
   }
