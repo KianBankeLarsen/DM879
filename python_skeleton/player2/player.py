@@ -6,8 +6,7 @@ from skeleton.states import GameState, TerminalState, RoundState
 from skeleton.states import NUM_ROUNDS, STARTING_STACK, BIG_BLIND, SMALL_BLIND
 from skeleton.bot import Bot
 from skeleton.runner import parse_args, run_bot
-from montecarlo_sim_handstrength import simulate_win_rate
-import eval7
+from ..utils.montecarlo_sim_handstrength import simulate_win_rate
 
 
 class Player(Bot):
@@ -97,6 +96,7 @@ class Player(Bot):
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
 
         win_rate = simulate_win_rate(game_state, round_state, active, simulations=1000)
+        print(win_rate)
         
         if round_state.hands[active][0][0] == round_state.hands[active][1][0]:
             print(f"Found pair {round_state.hands[active]}")
