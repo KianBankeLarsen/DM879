@@ -158,7 +158,7 @@ class Player():
         '''
         print(self.path)
         try:
-            with open(self.path + '/commands.json', 'r') as json_file:
+            with open(self.path, 'r') as json_file:
                 commands = json.load(json_file)
             if ('build' in commands and 'run' in commands and
                     isinstance(commands['build'], list) and
@@ -200,7 +200,7 @@ class Player():
                     port = server_socket.getsockname()[1]
                     proc = subprocess.Popen(self.commands['run'] + [str(port)],
                                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                            cwd=self.path)
+                                            cwd="python_skeleton")
                     self.bot_subprocess = proc
                     # function for bot listening
                     def enqueue_output(out, queue):

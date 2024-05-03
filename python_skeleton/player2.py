@@ -6,8 +6,8 @@ from skeleton.states import GameState, TerminalState, RoundState
 from skeleton.states import NUM_ROUNDS, STARTING_STACK, BIG_BLIND, SMALL_BLIND
 from skeleton.bot import Bot
 from skeleton.runner import parse_args, run_bot
-from ..utils.montecarlo_sim_handstrength import simulate_win_rate
 
+from utils.montecarlo_sim_handstrength import simulate_win_rate
 
 class Player(Bot):
     '''
@@ -83,11 +83,11 @@ class Player(Bot):
         #street = round_state.street  # 0, 3, 4, or 5 representing pre-flop, flop, turn, or river respectively
         #my_cards = round_state.hands[active]  # your cards
         #board_cards = round_state.deck[:street]  # the board cards
-        #my_pip = round_state.pips[active]  # the number of chips you have contributed to the pot this round of betting
-        #opp_pip = round_state.pips[1-active]  # the number of chips your opponent has contributed to the pot this round of betting
-        #my_stack = round_state.stacks[active]  # the number of chips you have remaining
-        #opp_stack = round_state.stacks[1-active]  # the number of chips your opponent has remaining
-        #continue_cost = opp_pip - my_pip  # the number of chips needed to stay in the pot
+        my_pip = round_state.pips[active]  # the number of chips you have contributed to the pot this round of betting
+        opp_pip = round_state.pips[1-active]  # the number of chips your opponent has contributed to the pot this round of betting
+        my_stack = round_state.stacks[active]  # the number of chips you have remaining
+        opp_stack = round_state.stacks[1-active]  # the number of chips your opponent has remaining
+        continue_cost = opp_pip - my_pip  # the number of chips needed to stay in the pot
         #my_contribution = STARTING_STACK - my_stack  # the number of chips you have contributed to the pot
         #opp_contribution = STARTING_STACK - opp_stack  # the number of chips your opponent has contributed to the pot
         #if RaiseAction in legal_actions:
@@ -95,12 +95,36 @@ class Player(Bot):
         #    min_cost = min_raise - my_pip  # the cost of a minimum bet/raise
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
 
-        win_rate = simulate_win_rate(game_state, round_state, active, simulations=1000)
-        print(win_rate)
+        wins, losses, draws = simulate_win_rate(round_state, active, n_simulations=100)
+        prob_win = wins / (wins + losses + draws)
         
-        if round_state.hands[active][0][0] == round_state.hands[active][1][0]:
-            print(f"Found pair {round_state.hands[active]}")
-            return RaiseAction(round_state.stacks[active])
+        # Raise if confident
+        if RaiseAction in legal_actions: 
+            if prob_win > .8:
+                return RaiseAction(my_stack * 1)
+            if prob_win > .7:
+                return RaiseAction(my_stack * 0.5)
+            if prob_win > .6:
+                return RaiseAction(my_stack * 0.2)
+        
+        # Check if unsure
+        if CheckAction in legal_actions:
+            return CheckAction()
+        
+        
+        # Fold if unsure (call required)
+        if CallAction in legal_actions:
+            if continue_cost <= .1 * my_stack and prob_win > .20:
+                
+            if continue_cost <= .1 * my_stack and prob_win > .20:
+                return FoldAction()
+            if continue_cost > .1 * my_stack and prob_win < .33:
+                return FoldAction()
+        
+        
+        # if round_state.hands[active][0][0] == round_state.hands[active][1][0]:
+        #     print(f"Found pair {round_state.hands[active]}")
+        #     return RaiseAction(round_state.stacks[active])
             
         
         if CheckAction in legal_actions:  # check-call
