@@ -15,6 +15,7 @@ import os
 
 sys.path.append(os.getcwd())
 from config import *
+import tqdm 
 
 FoldAction = namedtuple('FoldAction', [])
 CallAction = namedtuple('CallAction', [])
@@ -174,7 +175,7 @@ class Player():
             try:
                 proc = subprocess.run(self.commands['build'],
                                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                      cwd=self.path, timeout=BUILD_TIMEOUT, check=False)
+                                      cwd=os.path.dirname(self.path), timeout=BUILD_TIMEOUT, check=False)
                 self.bytes_queue.put(proc.stdout)
             except subprocess.TimeoutExpired as timeout_expired:
                 error_message = 'Timed out waiting for ' + self.name + ' to build'
@@ -200,7 +201,7 @@ class Player():
                     port = server_socket.getsockname()[1]
                     proc = subprocess.Popen(self.commands['run'] + [str(port)],
                                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                            cwd="python_skeleton")
+                                            cwd=os.path.dirname(self.path))
                     self.bot_subprocess = proc
                     # function for bot listening
                     def enqueue_output(out, queue):
@@ -404,7 +405,7 @@ class Game():
         for player in players:
             player.build()
             player.run()
-        for round_num in range(1, NUM_ROUNDS + 1):
+        for round_num in tqdm.tqdm(range(1, NUM_ROUNDS + 1)):
             self.log.append('')
             self.log.append('Round #' + str(round_num) + STATUS(players))
             self.run_round(players)

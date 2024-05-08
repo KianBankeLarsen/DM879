@@ -101,16 +101,17 @@ class Player(Bot):
         # Raise if confident
         if RaiseAction in legal_actions: 
             if prob_win > .8:
-                return RaiseAction(my_stack * 1)
+                return RaiseAction(my_stack)
             if prob_win > .7:
-                return RaiseAction(my_stack * 0.5)
+                amount = max(int(my_stack * 0.5), 1)
+                return RaiseAction(int(my_stack * 0.5))
             if prob_win > .6:
-                return RaiseAction(my_stack * 0.2)
+                amount = max(int(my_stack * 0.2), 1)
+                return RaiseAction(amount)
         
         # Check if unsure
         if CheckAction in legal_actions:
             return CheckAction()
-        
         
         # Fold if unsure (call required)
         if CallAction in legal_actions:
@@ -118,20 +119,9 @@ class Player(Bot):
                 return CallAction()
             if continue_cost <= .1 * my_stack and prob_win < .2:
                 return CallAction()
-            if continue_cost > .1 * my_stack and prob_win < .2:
-                return FoldAction()
-        
-        
-        # if round_state.hands[active][0][0] == round_state.hands[active][1][0]:
-        #     print(f"Found pair {round_state.hands[active]}")
-        #     return RaiseAction(round_state.stacks[active])
-        
-        
-        if CheckAction in legal_actions:  # check-call
-            return CheckAction()
-        return CallAction()
+    
+        return FoldAction()
 
 
 if __name__ == '__main__':
     run_bot(Player(), parse_args())
-    print("in main player 2")

@@ -22,8 +22,7 @@ class Player(Bot):
         Returns:
         Nothing.
         '''
-        print("player 1 init")
-        # pass
+        pass
 
     def handle_new_round(self, game_state, round_state, active):
         '''
@@ -98,4 +97,3 @@ class Player(Bot):
 
 if __name__ == '__main__':
     run_bot(Player(), parse_args())
-    print("in main player 1")
