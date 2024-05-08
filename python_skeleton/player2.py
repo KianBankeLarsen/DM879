@@ -99,14 +99,14 @@ class Player(Bot):
         prob_win = wins / (wins + losses + draws)
         
         # Raise if confident
-        if RaiseAction in legal_actions: 
+        if RaiseAction in legal_actions and my_stack >= BIG_BLIND: 
             if prob_win > .8:
                 return RaiseAction(my_stack)
             if prob_win > .7:
-                amount = max(int(my_stack * 0.5), 1)
-                return RaiseAction(int(my_stack * 0.5))
+                amount = max([int(my_stack * 0.5), 1, BIG_BLIND])
+                return RaiseAction(amount)
             if prob_win > .6:
-                amount = max(int(my_stack * 0.2), 1)
+                amount = max([int(my_stack * 0.2), 1, BIG_BLIND])
                 return RaiseAction(amount)
         
         # Check if unsure
