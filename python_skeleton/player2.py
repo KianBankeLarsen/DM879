@@ -114,18 +114,18 @@ class Player(Bot):
         
         # Fold if unsure (call required)
         if CallAction in legal_actions:
-            if continue_cost <= .1 * my_stack and prob_win > .20:
-                
-            if continue_cost <= .1 * my_stack and prob_win > .20:
-                return FoldAction()
-            if continue_cost > .1 * my_stack and prob_win < .33:
+            if prob_win > .20:
+                return CallAction()
+            if continue_cost <= .1 * my_stack and prob_win < .2:
+                return CallAction()
+            if continue_cost > .1 * my_stack and prob_win < .2:
                 return FoldAction()
         
         
         # if round_state.hands[active][0][0] == round_state.hands[active][1][0]:
         #     print(f"Found pair {round_state.hands[active]}")
         #     return RaiseAction(round_state.stacks[active])
-            
+        
         
         if CheckAction in legal_actions:  # check-call
             return CheckAction()
