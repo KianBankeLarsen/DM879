@@ -7,8 +7,12 @@ def simulate_win_rate(round_state, active, n_simulations=100):
     and returns a triple of the number of wins, loses and draws that result from 
     the simulations.
     """
-    player_cards = [eval7.Card(c) for c in round_state.hands[active]]
-    board_cards = [eval7.Card(c) for c in round_state.deck[:round_state.street]]
+    # print("active : ", active)
+    # print("hand : ", round_state.hands[active])
+    # player_cards = [eval7.Card(c) for c in round_state.hands[active]]
+    player_cards = round_state.hands[active]
+    # board_cards = [eval7.Card(c) for c in round_state.deck[:round_state.street]]
+    board_cards = round_state.deck[:round_state.street]
     win = 0
     lose = 0
     draw = 0
@@ -28,12 +32,11 @@ def simulate_win_rate(round_state, active, n_simulations=100):
             draw += 1
     return win, lose, draw
 
+
 def simulate(n_simulations, player_cards, suited = False):
     win = 0
     lose = 0
     draw = 0
-
-
     
     for _ in range(n_simulations):
         deck = eval7.Deck()
@@ -82,7 +85,7 @@ def precompute_starting_hands(n_simulations=1000):
         suited_cards[hand_key]["draw"] += draw
         
 
-    
+    pass
     
     
     
