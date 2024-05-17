@@ -1,1 +1,15 @@
 player 2 init
+Traceback (most recent call last):
+  File "/Users/thomaswulffheissel/Desktop/2_semester/Artificial_intelligence/DM879/python_skeleton/player2.py", line 127, in <module>
+    run_bot(Player(), parse_args())
+  File "/Users/thomaswulffheissel/Desktop/2_semester/Artificial_intelligence/DM879/python_skeleton/skeleton/runner.py", line 130, in run_bot
+    runner.run()
+  File "/Users/thomaswulffheissel/Desktop/2_semester/Artificial_intelligence/DM879/python_skeleton/skeleton/runner.py", line 105, in run
+    action = self.pokerbot.get_action(game_state, round_state, active)
+  File "/Users/thomaswulffheissel/Desktop/2_semester/Artificial_intelligence/DM879/python_skeleton/player2.py", line 98, in get_action
+    wins, losses, draws = simulate_win_rate(round_state, active, n_simulations=100)
+  File "/Users/thomaswulffheissel/Desktop/2_semester/Artificial_intelligence/DM879/python_skeleton/utils/montecarlo_sim_handstrength.py", line 25, in simulate_win_rate
+    player_score = eval7.evaluate(player_cards + board_cards + sampled_board_cards)
+  File "eval7/evaluate.pyx", line 152, in eval7.evaluate.evaluate
+  File "eval7/cards.pyx", line 126, in eval7.cards.cards_to_mask
+AttributeError: 'str' object has no attribute 'mask'
