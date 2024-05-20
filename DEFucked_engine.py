@@ -1,57 +1,13 @@
-'''
-6.176 MIT POKERBOTS GAME ENGINE
-DO NOT REMOVE, RENAME, OR EDIT THIS FILE
-'''
 from collections import namedtuple
-from threading import Thread
-from queue import Queue
-import time
-import json
 from python_skeleton.skeleton.actions import FoldAction, CallAction, CheckAction, RaiseAction
-from python_skeleton.model import Model
 import eval7
-import sys
-import os
+from tqdm import tqdm
 
-sys.path.append(os.getcwd())
-from config import *
-import tqdm 
-# from skeleton.actions import FoldAction, CallAction, CheckAction, RaiseAction
-
-# FoldAction = namedtuple('FoldAction', [])
-# CallAction = namedtuple('CallAction', [])
-# CheckAction = namedtuple('CheckAction', [])
-# # we coalesce BetAction and RaiseAction for convenience
-# RaiseAction = namedtuple('RaiseAction', ['amount'])
+# Global attributes
+STARTING_STACK = 400
+BIG_BLIND = 2
+SMALL_BLIND = 1
 TerminalState = namedtuple('TerminalState', ['deltas', 'previous_state'])
-
-STREET_NAMES = ['Flop', 'Turn', 'River']
-DECODE = {'F': FoldAction, 'C': CallAction, 'K': CheckAction, 'R': RaiseAction}
-CCARDS = lambda cards: ','.join(map(str, cards))
-PCARDS = lambda cards: '[{}]'.format(' '.join(map(str, cards)))
-PVALUE = lambda name, value: ', {} ({})'.format(name, value)
-STATUS = lambda players: ''.join([PVALUE(p.name, p.bankroll) for p in players])
-
-# Socket encoding scheme:
-#
-# T#.### the player's game clock
-# P# the player's index
-# H**,** the player's hand in common format
-# F a fold action in the round history
-# C a call action in the round history
-# K a check action in the round history
-# R### a raise action in the round history
-# B**,**,**,**,** the board cards in common format
-# O**,** the opponent's hand in common format
-# D### the player's bankroll delta from the round
-# Q game over
-#
-# Clauses are separated by spaces
-# Messages end with '\n'
-# The engine expects a response of K at the end of the round as an ack,
-# otherwise a response which encodes the player's action
-# Action history is sent once, including the player's actions
-
 
 class RoundState(namedtuple('_RoundState', ['button', 'street', 'pips', 'stacks', 'hands', 'deck', 'previous_state'])):
     '''
@@ -153,42 +109,6 @@ class RoundState(namedtuple('_RoundState', ['button', 'street', 'pips', 'stacks'
         new_pips[active] += contribution
         return RoundState(self.button + 1, self.street, new_pips, new_stacks, self.hands, self.deck, self)
 
-
-class Player(Model):
-    '''
-    Handles subprocess and socket interactions with one player's pokerbot.
-    '''
-
-    def __init__(self, name, path):
-        self.name = name
-        self.path = path
-        self.game_clock = STARTING_GAME_CLOCK
-        self.bankroll = 0
-        self.commands = None
-        self.bot_subprocess = None
-        self.socketfile = None
-        self.bytes_queue = Queue()
-
-
-    def query(self, round_state, player, active):
-        '''
-        Requests one action from the pokerbot over the socket connection.
-        At the end of the round, we request a CheckAction from the pokerbot.
-        '''
-        legal_actions = round_state.legal_actions() if isinstance(round_state, RoundState) else {CheckAction}
-        
-        action = player.get_action(round_state, active)
-        if action in legal_actions:
-            if action is RaiseAction:
-                amount = int(action[1:])
-                min_raise, max_raise = round_state.raise_bounds()
-                if min_raise <= amount <= max_raise:
-                    return action(amount)
-            else:
-                return action()
-        return CheckAction() if CheckAction in legal_actions else FoldAction()
-
-
 class Game():
     '''
     Manages logging and the high-level game procedure.
@@ -211,21 +131,16 @@ class Game():
             player = players[active]
             action = player.get_action(round_state, active)
             round_state = round_state.proceed(action)
+
         for player, delta in zip(players, round_state.deltas):
-            # action = player.get_action(round_state, active)
             player.bankroll += delta
 
     def run(self, players, tournament_rounds):
         '''
         Runs one game of poker.
         '''
-        print('   __  _____________  ___       __           __        __    ')
-        print('  /  |/  /  _/_  __/ / _ \\___  / /_____ ____/ /  ___  / /____')
-        print(' / /|_/ // /  / /   / ___/ _ \\/  \'_/ -_) __/ _ \\/ _ \\/ __(_-<')
-        print('/_/  /_/___/ /_/   /_/   \\___/_/\\_\\\\__/_/ /_.__/\\___/\\__/___/')
-        print()
-        print('Starting the Pokerbots engine...')
-        for _ in tqdm.tqdm(range(1, tournament_rounds + 1)):
+        p1, p2 = players[0], players[1] # To keep track of the two players since they are swapped in the list
+        for _ in tqdm(range(1, tournament_rounds + 1), desc="round", leave=False):
             self.run_round(players)
             players = players[::-1]
-        return [p.bankroll for p in players]
+        return (p1.bankroll, p2.bankroll)
