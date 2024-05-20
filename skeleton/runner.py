@@ -54,17 +54,21 @@ class Runner():
         for packet in self.receive():
             for clause in packet:
                 if clause[0] == 'T':
-                    game_state = GameState(game_state.bankroll, float(clause[1:]), game_state.round_num)
+                    game_state = GameState(game_state.bankroll, float(
+                        clause[1:]), game_state.round_num)
                 elif clause[0] == 'P':
                     active = int(clause[1:])
                 elif clause[0] == 'H':
                     hands = [[], []]
                     hands[active] = clause[1:].split(',')
                     pips = [SMALL_BLIND, BIG_BLIND]
-                    stacks = [STARTING_STACK - SMALL_BLIND, STARTING_STACK - BIG_BLIND]
-                    round_state = RoundState(0, 0, pips, stacks, hands, [], None)
+                    stacks = [STARTING_STACK - SMALL_BLIND,
+                              STARTING_STACK - BIG_BLIND]
+                    round_state = RoundState(
+                        0, 0, pips, stacks, hands, [], None)
                     if round_flag:
-                        self.pokerbot.handle_new_round(game_state, round_state, active)
+                        self.pokerbot.handle_new_round(
+                            game_state, round_state, active)
                         round_flag = False
                 elif clause[0] == 'F':
                     round_state = round_state.proceed(FoldAction())
@@ -73,7 +77,8 @@ class Runner():
                 elif clause[0] == 'K':
                     round_state = round_state.proceed(CheckAction())
                 elif clause[0] == 'R':
-                    round_state = round_state.proceed(RaiseAction(int(clause[1:])))
+                    round_state = round_state.proceed(
+                        RaiseAction(int(clause[1:])))
                 elif clause[0] == 'B':
                     round_state = RoundState(round_state.button, round_state.street, round_state.pips, round_state.stacks,
                                              round_state.hands, clause[1:].split(','), round_state.previous_state)
@@ -91,10 +96,14 @@ class Runner():
                     delta = int(clause[1:])
                     deltas = [-delta, -delta]
                     deltas[active] = delta
-                    round_state = TerminalState(deltas, round_state.previous_state)
-                    game_state = GameState(game_state.bankroll + delta, game_state.game_clock, game_state.round_num)
-                    self.pokerbot.handle_round_over(game_state, round_state, active)
-                    game_state = GameState(game_state.bankroll, game_state.game_clock, game_state.round_num + 1)
+                    round_state = TerminalState(
+                        deltas, round_state.previous_state)
+                    game_state = GameState(
+                        game_state.bankroll + delta, game_state.game_clock, game_state.round_num)
+                    self.pokerbot.handle_round_over(
+                        game_state, round_state, active)
+                    game_state = GameState(
+                        game_state.bankroll, game_state.game_clock, game_state.round_num + 1)
                     round_flag = True
                 elif clause[0] == 'Q':
                     return
@@ -102,7 +111,8 @@ class Runner():
                 self.send(CheckAction())
             else:
                 assert active == round_state.button % 2
-                action = self.pokerbot.get_action(game_state, round_state, active)
+                action = self.pokerbot.get_action(
+                    game_state, round_state, active)
                 self.send(action)
 
 
@@ -111,9 +121,11 @@ def parse_args():
     Parses arguments corresponding to socket connection information.
     '''
     parser = argparse.ArgumentParser(prog='python3 player.py')
-    parser.add_argument('--host', type=str, default='localhost', help='Host to connect to, defaults to localhost')
+    parser.add_argument('--host', type=str, default='localhost',
+                        help='Host to connect to, defaults to localhost')
     parser.add_argument('port', type=int, help='Port on host to connect to')
     return parser.parse_args()
+
 
 def run_bot(pokerbot, args):
     '''
