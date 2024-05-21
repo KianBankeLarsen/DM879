@@ -1,28 +1,20 @@
-from Individual import Individual
-from random import random
+from .Individual import Individual
+from random import choice, random
 
 
 class Population():
 
-    def __init__(self, population_size, omega):
-        """Creates a new population of n individuals"""
+    def __init__(self, population_size):
+        """Creates a new population of individuals"""
         self.population = [Individual() for _ in range(population_size)]
-        self.omega = omega
-        self.best = 0  # the highest bankroll in the population, for optimization
 
     def add(self, ind):
         """Adds the individual to the population"""
         self.population.append(ind)
-        if self.best < ind.bankroll:
-            self.best = ind.bankroll
 
     def remove(self, ind):
         """Removes the individual from the population"""
         self.population.remove(ind)
-
-    def fitness(self, ind):
-        """Calculates the fitness of the individual"""
-        (self.omega + (self.best/ind.bankroll)**2) / (1 + 2*self.omega)
 
     def best(self):
         """Returns the best individual in the population"""
@@ -41,16 +33,41 @@ class Population():
         best = self.best()
         for _ in range(ks):
             self._remove_worst()
-            tmp.append(best.copy())
+            cp = best.copy()
+            cp.mutate(0.1)
+            tmp.append(cp)
+        for i in tmp:
+            self.add(i)
 
-        # I don't really know if we need this?
+    def generate_children(self, children):
+        self.population = sorted(self.population, key=lambda x: x.bankroll)
+        for parent1_idx in range(0, children*2, 2): 
+            parent2_idx = parent1_idx + 1
+            child = Individual.generate_child(self.population[parent1_idx], self.population[parent2_idx])
+            self._remove_worst()
+            self.add(child)
+
+    def mutate_population(self, mutation_rate, mutation_volatility):
+        for individual in self.population:
+            if random() < mutation_rate:
+                individual.mutate(mutation_volatility)
+
+    def reset_bankroll(self):
+        """Resets the bankrolls of all individuals"""
+        for i in self.population:
+            i.bankroll = 0
+
+    def find_opponent(self, ind):
+        """Finds an opponent for the given individual"""
+        return choice([i for i in self.population if i != ind])
+
+    def _remove_worst(self):
+        """Removes the worst individual in the population"""
+        worst = self.population[0]
         i = 0
         while i < len(self.population):
-            fit = self.fitness(self.population[i])
-            if random() > fit*fit:
-                self.population.pop(i)
-            else:
-                i = i + 1
+            if self.population[i].bankroll < worst.bankroll:
+                worst = self.population[i]
+            i = i + 1
 
-        for i in tmp:
-            self.population.append(i)
+        self.population.remove(worst)

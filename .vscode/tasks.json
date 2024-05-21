@@ -12,7 +12,7 @@
             "type": "shell",
             "group": "build",
             "dependsOn": ["build"],
-            "command": "docker run -v ./logs/gamelog.log:/poker/gamelog.txt -v ./logs/A.log:/poker/A.txt -v ./logs/B.log:/poker/B.txt poker"
+            "command": "docker run -v ./pickle:/poker/pickle poker"
         }
     ]
 }
