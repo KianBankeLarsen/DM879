@@ -116,10 +116,10 @@ class Game():
         '''
         deck = eval7.Deck()
         deck.shuffle()
-        hands = [deck.deal(2), deck.deal(2)]
+        self.hands = [deck.deal(2), deck.deal(2)]
         pips = [SMALL_BLIND, BIG_BLIND]
         stacks = [STARTING_STACK - SMALL_BLIND, STARTING_STACK - BIG_BLIND]
-        round_state = RoundState(0, 0, pips, stacks, hands, deck, None)
+        round_state = RoundState(0, 0, pips, stacks, self.hands, deck, None)
         while not isinstance(round_state, TerminalState):
             active = round_state.button % 2
             player = players[active]
