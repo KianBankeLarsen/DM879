@@ -1,11 +1,3 @@
-Traceback (most recent call last):
-  File "/work/evolution/DM879/main.py", line 1, in <module>
-    from evolution.Simulator import evolution
-  File "/work/evolution/DM879/evolution/Simulator.py", line 2, in <module>
-    from engine import Game
-  File "/work/evolution/DM879/engine.py", line 3, in <module>
-    import eval7
-ModuleNotFoundError: No module named 'eval7'
 Best: Str:0.39437251817893526\Agr:0.3849459924373325\Dec:0.8038642196250754\BeM:0.9266969877162495\BSD:0.10705196939075834\BR:34297
 Best: Str:0.8281822881757641\Agr:0.8083865841183984\Dec:1\BeM:1\BSD:0.22480913572059252\BR:25180
 Best: Str:0.39437251817893526\Agr:0.3849459924373325\Dec:0.8038642196250754\BeM:0.9266969877162495\BSD:0.10705196939075834\BR:41392
