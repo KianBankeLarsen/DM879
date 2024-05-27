@@ -79,16 +79,16 @@ class Individual():
         """Returns an action for the given round."""
         # Estimate the probability of winning
         win_prop = estimate_hand_strength(
-            round_state=round_state, active=active, n=1000)
+            round_state=round_state, active=active, n=200)
 
         # Expected winnings
-        # my_stack = round_state.stacks[active]
-        # opp_stack = round_state.stacks[1-active]
-        # my_contribution = STARTING_STACK - my_stack
-        # opp_contribution = STARTING_STACK - opp_stack
-        # continue_cost, _ = round_state.raise_bounds
-        # pot_total = my_contribution + opp_contribution
-        # expected_winnings = (win_prop * pot_total) - (1-win_prop) * continue_cost
+        my_stack = round_state.stacks[active]
+        opp_stack = round_state.stacks[1-active]
+        my_contribution = 400 - my_stack
+        opp_contribution = 400 - opp_stack
+        continue_cost, _ = round_state.raise_bounds
+        pot_total = my_contribution + opp_contribution
+        expected_winnings = (win_prop * pot_total) - (1-win_prop) * continue_cost
 
         legal_actions = round_state.legal_actions()
         if RaiseAction in legal_actions:
@@ -98,7 +98,7 @@ class Individual():
                 bluff_bet_prop = np.average([win_prop, self.deception])
                 return self.bet(bluff_bet_prop, round_state, active)
 
-        if CallAction in legal_actions and isclose(win_prop, self.strength, rel_tol=0.05):
+        if CallAction in legal_actions and expected_winnings >= 0:
             return CallAction()
 
         if CheckAction in legal_actions:
