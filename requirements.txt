@@ -2,3 +2,4 @@ cython
 eval7
 tqdm
 scipy
+numpy==1.26.4

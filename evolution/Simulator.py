@@ -12,7 +12,7 @@ def evolution(
         mutation_rate=0.01,
         mutation_volatility=0.1,
         num_tournaments=5,
-        tournament_rounds=1000
+        tournament_rounds=100
 ):
     """
     Simulates a steady state evolutionary algorithm to determine the best

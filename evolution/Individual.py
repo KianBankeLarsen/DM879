@@ -5,10 +5,10 @@ from math import floor, isclose
 import numpy as np
 from utils.Handstrength import estimate_hand_strength
 # from engine import STARTING_STACK
-
+from globals import get_lookup_hand, lookup_dict
 
 class Individual():
-    def __init__(self, strength=None, aggression=None, deception=None, betting_mean=None, betting_std=None, bankroll=None):
+    def __init__(self, strength=None, aggression=None, deception=None, betting_mean=None, betting_std=None, bankroll=None, lookup_dict=None):
         """Creates a new individual.
         Each of the attributes of the individual corresponds
         to a playing principle in poker.
@@ -47,6 +47,8 @@ class Individual():
             self.bankroll = 0
 
         self._betting_distribution = self._get_betting_distribution()
+        
+        self.lookup_dict = lookup_dict
 
     def _update_betting_distribution(self):
         self._betting_distribution = self._get_betting_distribution()
@@ -78,15 +80,20 @@ class Individual():
     def get_action(self, round_state, active):
         """Returns an action for the given round."""
         # Estimate the probability of winning
-        win_prop = estimate_hand_strength(
-            round_state=round_state, active=active, n=200)
-
+        win_prop = 0
+        if round_state.street < 4:
+            win_prop = get_lookup_hand(round_state, active)
+        else:
+            win_prop = estimate_hand_strength(
+            round_state=round_state, active=active, n=1000)
+        
+        
         # Expected winnings
         my_stack = round_state.stacks[active]
         opp_stack = round_state.stacks[1-active]
         my_contribution = 400 - my_stack
         opp_contribution = 400 - opp_stack
-        continue_cost, _ = round_state.raise_bounds
+        continue_cost, _ = round_state.raise_bounds()
         pot_total = my_contribution + opp_contribution
         expected_winnings = (win_prop * pot_total) - (1-win_prop) * continue_cost
 
