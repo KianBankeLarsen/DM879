@@ -1,8 +1,13 @@
+import os
+import pickle
 from evolution.Simulator import evolution
 from players.evolutionPlayer import EvolutionPlayer
-
+from globals import initialize_lookup_dict, get_lookup_dict
+from time import sleep
 if __name__ == '__main__':
-
+    
+    initialize_lookup_dict()
+    
     player = EvolutionPlayer()
     population = player.evolve(
         population_size=100,
@@ -19,3 +24,5 @@ if __name__ == '__main__':
 
     for idx, ind in enumerate(sorted(population.population, key=lambda x: x.bankroll)):
         player.save_player(f"pickle/individual_{idx}.pickle", ind)
+
+

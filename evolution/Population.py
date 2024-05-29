@@ -7,7 +7,7 @@ class Population():
     def __init__(self, population_size):
         """Creates a new population of individuals"""
         self.population = [Individual() for _ in range(population_size)]
-
+        
     def add(self, ind):
         """Adds the individual to the population"""
         self.population.append(ind)

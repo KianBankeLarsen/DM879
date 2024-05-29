@@ -1,7 +1,7 @@
 from random import random
 from scipy.stats import truncnorm
 from skeleton.actions import FoldAction, CallAction, CheckAction, RaiseAction
-from math import floor, isclose
+from math import floor
 import numpy as np
 from utils.Handstrength import estimate_hand_strength
 # from engine import STARTING_STACK
