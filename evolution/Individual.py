@@ -1,7 +1,7 @@
 from random import random
 from scipy.stats import truncnorm
 from skeleton.actions import FoldAction, CallAction, CheckAction, RaiseAction
-from math import floor, isclose
+from math import floor
 import numpy as np
 from utils.Handstrength import estimate_hand_strength
 # from engine import STARTING_STACK
@@ -86,7 +86,7 @@ class Individual():
         opp_stack = round_state.stacks[1-active]
         my_contribution = 400 - my_stack
         opp_contribution = 400 - opp_stack
-        continue_cost, _ = round_state.raise_bounds
+        continue_cost, _ = round_state.raise_bounds()
         pot_total = my_contribution + opp_contribution
         expected_winnings = (win_prop * pot_total) - (1-win_prop) * continue_cost
 
