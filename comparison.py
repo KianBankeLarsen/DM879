@@ -1,3 +1,4 @@
+from globals import initialize_lookup_dict
 from players.randomPlayer import RandomPlayer
 from players.pairSeekingPlayer import PairSeekingPlayer
 from players.evolutionPlayer import EvolutionPlayer
@@ -17,10 +18,13 @@ evo_player = EvolutionPlayer()
 for f in files:
     players.append(evo_player.get_player(f"{folder}/{f}"))
 players.sort(key=lambda p: p.bankroll, reverse=True)
-# players = players[:20]
-bankrolls = [p.bankroll for p in players]
+players = players[:10]
+population_bankrolls = [p.bankroll for p in players] # Saving for later
+for p in players: # Reset before comparing to other opponents
+    p.bankroll = 0
 
 # Play games against a random and pairseeking player
+initialize_lookup_dict()
 game = Game()
 bankrolls_random = []
 bankrolls_pairseeker = []
@@ -35,15 +39,14 @@ for p in players:
 # Initialise dataframe
 data = {
     'player': [f'player{i}' for i in range(len(players))],
-    'score': bankrolls_random.sort()
+    'score': bankrolls_random
 }
 df = pd.DataFrame(data)
 # Normalize the scores
 normalized_df = df.copy()
 score_columns = ['score']
-
-for column in score_columns:
-    normalized_df[column] = (df[column] - df[column].mean()) / df[column].mean()
+normalized_df['score'] = (df['score'] - df['score'].mean()) / df['score'].mean()
+normalized_df = normalized_df.sort_values(by=['score'])
 
 # Create box plots
 plt.figure(figsize=(10, 6))
