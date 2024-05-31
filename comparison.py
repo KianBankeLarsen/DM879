@@ -13,9 +13,6 @@ import re
 
 def create_plot(data, opponent_type):
     """Creates bar plots for the given result data"""
-    print(opponent_type)
-    print(df)
-    print()
     df = pd.DataFrame(data)
     # Normalizing the scores
     normalized_df = df.copy()
@@ -77,7 +74,7 @@ for i in range(len(content)):
 
 ## Focus only on the 10 best
 players.sort(key=lambda p: p['against_population'], reverse=True)
-players = players[:20]
+players = players[:10]
 for p in players:
     print(p)
 
