@@ -1,9 +1,6 @@
-import os
-import pickle
-from evolution.Simulator import evolution
 from players.evolutionPlayer import EvolutionPlayer
-from globals import initialize_lookup_dict, get_lookup_dict
-from time import sleep
+from globals import initialize_lookup_dict
+
 if __name__ == '__main__':
     
     initialize_lookup_dict()
